@@ -1,4 +1,21 @@
-venv/
+# Python
 __pycache__/
-.env
 *.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+
+# FastAPI logs
+*.log
+
+# macOS
+.DS_Store
+
+# Docker
+*.pid
+*.sock
+
+# VS Code / Cursor
+.vscode/
