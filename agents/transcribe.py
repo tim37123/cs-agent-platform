@@ -1,5 +1,4 @@
 from typing import Literal
-
 def transcribe_audio(file_path: str, provider: Literal["whisper", "gcp"]):
     if provider == "whisper":
         return _transcribe_with_whisper(file_path)
