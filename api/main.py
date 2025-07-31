@@ -2,15 +2,30 @@
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
+from api.routes import orchestrator, summarize
 import os
 import uuid
-
+from utils.logger import logger
+from storage.startup import initialize_database
 from agents.transcribe import transcribe_audio
+from models.call import Call
+from storage.db import SessionLocal
+from sqlalchemy.exc import SQLAlchemyError
+
 
 app = FastAPI()
 
+
 UPLOAD_DIR = "data/sample_calls"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+@app.on_event("startup")
+def on_startup():
+    logger.info("🚀 Starting up...")
+    initialize_database()
+
+app.include_router(orchestrator.router)
+app.include_router(summarize.router)
 
 @app.get("/ping")
 def ping():
@@ -51,9 +66,23 @@ async def transcribe_call(file: UploadFile = File(...)):
     
     try:
         transcript = transcribe_audio(save_path, provider="whisper")
+        db = SessionLocal()
+        db_call = Call(
+            call_id=call_id,
+            filename=file.filename,
+            transcript=transcript
+        )
+
+        db.add(db_call)
+        db.commit()
+        db.refresh(db_call)
+        
         return{
             "call_id": call_id,
             "transcript": transcript
         }
+    
+    except SQLAlchemyError as db_error:
+        return JSONResponse(status_code=500, content={"error": f"DB error: {str(db_error)}"})
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})

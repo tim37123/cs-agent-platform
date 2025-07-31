@@ -19,3 +19,6 @@ venv/
 
 # VS Code / Cursor
 .vscode/
+
+# Ignore sample_calls data
+data/sample_calls/
