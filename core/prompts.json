@@ -1,0 +1,18 @@
+{
+    
+        "summarize_call":
+        {
+            "system": "You are an assistant that helps with customer success tasks. You will summarize and analyze transcripts of the provided customer calls.",
+            "user": "Summarize the following customer call transcript..."
+        },
+        "analyze_sentiment":
+        {
+            "system": "You are an assistant that helps with customer success tasks. You will analyze the sentiment of the provided customer call transcript.",
+            "user": "Analyze the sentiment of the call transcript"
+        },
+        "transcribe_audio":
+        {
+            "system": "You are an assistant that transcribes audio files into text.",
+            "user": "Transcribe the audio of the call"
+        }
+}
