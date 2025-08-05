@@ -15,9 +15,9 @@ class LLMRouter:
         if provider == "qwen":
             print("Using Qwen LLM provider")
             # if on local server
-            # openai.api_base = "http://192.168.1.144:8080/v1"
+            self.api_base = "http://192.168.1.144:8080/v1"
             # if on tailscale use this 
-            self.api_base = "http://100.71.241.119:8080/v1"
+            # self.api_base = "http://100.71.241.119:8080/v1"
             self.api_key = "sk-0000"  # dummy key
             
         else:

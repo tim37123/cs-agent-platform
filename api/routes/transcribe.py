@@ -1,13 +1,15 @@
 from fastapi import APIRouter, File, UploadFile
-from pydantic import BaseModel
+# from pydantic import BaseModel
 import os
-from core.llm_interface import LLMRouter
+# from core.llm_interface import LLMRouter
 from fastapi.responses import JSONResponse
+from fastapi.concurrency import run_in_threadpool
 import uuid
 from storage.db import SessionLocal
 from agents.transcribe import transcribe_audio
 from models.call import Call
 from sqlalchemy.exc import SQLAlchemyError
+import aiofiles
 
 router = APIRouter()
 
@@ -26,11 +28,16 @@ async def transcribe(file: UploadFile = File(...)):
     call_id = str(uuid.uuid4())
     save_path = os.path.join(UPLOAD_DIR, f"{call_id}{file_ext}")
 
-    with open(save_path, "wb") as f:
-        f.write(await file.read())
+    # with open(save_path, "wb") as f:
+    #     f.write(await file.read())
+
+    async with aiofiles.open(save_path, "wb") as f:
+        content = await file.read()
+        await f.write(content)
     
     try:
-        transcript = transcribe_audio(save_path, provider="whisper")
+        # transcript = transcribe_audio(save_path, provider="whisper")
+        transcript = await run_in_threadpool(transcribe_audio, save_path, provider="whisper")
         db = SessionLocal()
         db_call = Call(
             call_id=call_id,

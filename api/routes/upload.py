@@ -4,15 +4,9 @@ from core.llm_interface import LLMRouter
 from fastapi.responses import JSONResponse
 import os
 import uuid
+import aiofiles
 
 router = APIRouter()
-
-# class UploadRequest(BaseModel):
-#     file: File
-
-# class UploadResponse(BaseModel):
-#     status_code: int
-#     content: object
 
 @router.post("/upload-call")
 async def upload(file: UploadFile = File(...)):
@@ -29,8 +23,12 @@ async def upload(file: UploadFile = File(...)):
     save_path = os.path.join(UPLOAD_DIR, f"{call_id}{file_ext}")
 
     # Save file to disk
-    with open(save_path, "wb") as f:
-        f.write(await file.read())
+    # with open(save_path, "wb") as f:
+    #     f.write(await file.read())
+
+    async with aiofiles.open(save_path, "wb") as out_file:
+        content = await file.read()  # still async
+        await out_file.write(content)
 
     return {
         "message": "Upload successful",
