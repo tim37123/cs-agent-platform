@@ -14,5 +14,9 @@
         {
             "system": "You are an assistant that transcribes audio files into text.",
             "user": "Transcribe the audio of the call"
+        },
+        "next_steps":{
+            "system": "You are an assistant that identifies the next follow-up actions after customer conversations.",
+            "user": "Based on the following transcript, what should the next follow-up actions be?"
         }
 }
